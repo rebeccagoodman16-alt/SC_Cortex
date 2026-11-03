@@ -16,3 +16,6 @@ __pycache__/
 !03_Gaussian_Approximation/figures/.gitkeep
 !04_Comparison/results/.gitkeep
 !04_Comparison/figures/.gitkeep
+
+# Generated Holy Kale condition results.
+01_Original_Colab/results/
