@@ -1,5 +1,18 @@
 __pycache__/
 .ipynb_checkpoints/
 .venv/
-results/
 *.pyc
+
+# Generated numerical results and figures.
+02_Brunel_SNN/results/*
+02_Brunel_SNN/figures/*
+03_Gaussian_Approximation/results/*
+03_Gaussian_Approximation/figures/*
+04_Comparison/results/*
+04_Comparison/figures/*
+!02_Brunel_SNN/results/.gitkeep
+!02_Brunel_SNN/figures/.gitkeep
+!03_Gaussian_Approximation/results/.gitkeep
+!03_Gaussian_Approximation/figures/.gitkeep
+!04_Comparison/results/.gitkeep
+!04_Comparison/figures/.gitkeep
