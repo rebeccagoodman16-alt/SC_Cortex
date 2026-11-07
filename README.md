@@ -1,5 +1,7 @@
 # SC_Cortex
 
+Updated: November 7, 2026
+
 Readable notebooks based on the supplied `HOLYKALE.ipynb`. The original notebook is preserved unchanged in [`01_Original_Colab/`](./01_Original_Colab/). [`G_Comparison_Recurrent_LIF.ipynb`](./01_Original_Colab/G_Comparison_Recurrent_LIF.ipynb) in that same folder runs the original network across multiple relative inhibitory strengths.
 
 ## Notebook order
@@ -10,6 +12,7 @@ Readable notebooks based on the supplied `HOLYKALE.ipynb`. The original notebook
 4. [`01_Original_Colab/G_Comparison_Recurrent_LIF.ipynb`](./01_Original_Colab/G_Comparison_Recurrent_LIF.ipynb) — opt-in comparison of `g = 3.0, 4.0, 4.5, 6.0`, the relative inhibitory strengths (`-g*J`).
 
 The individual recurrent LIF condition notebooks are organized by inhibitory strength in [`01_Original_Colab/`](./01_Original_Colab/): `3.0/`, `4.0/`, `4.5/`, and `6.0/`. Each notebook saves its outputs under `01_Original_Colab/results/.../`. Notebook root discovery works when launched from the repository root, `01_Original_Colab`, or any condition subfolder.
+The Figure 10 notebook [`Figure10_G4.5_CE100_CI25_J1.0.ipynb`](./01_Original_Colab/4.5/Figure10_G4.5_CE100_CI25_J1.0.ipynb) reproduces the larger-amplitude condition with `J = 1 mV`, `C_E = 100`, `C_I = 25`, and `g = 4.5`. Set `V_R_MV = 0` for panel A or `10` for panel B; each run writes to a separate condition directory.
 Run the immediate “Save the completed recurrent simulation” cell after the network/FFT cells to persist results before starting the Gaussian analysis. If the kernel has been restarted, in-memory results are gone and the simulation must be rerun.
 
 Additional condition notebooks cover `V_r = 0 mV` for `g = 4.0` and `g = 4.5`, with `J = 0.1 mV` and `J = 1.0 mV`. Their outputs are saved under `01_Original_Colab/results/G..._VR0_J.../`.
