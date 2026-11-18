@@ -84,6 +84,38 @@ def tables_from_text(text: str):
     return tables, other
 
 
+NUM_IN_TEXT = re.compile(r"[-+]?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][-+]?\d+)?|nan")
+
+
+def templated_tables(lines):
+    """Turn runs of >= 2 lines that share a template, e.g.
+    'J=0.1: FF 0.48/ 0.45 tau_c 40.7/ 41.8 ms', into a table whose column names come
+    from the text before each number. Returns (tables, leftover lines)."""
+    def template(l):
+        return re.sub(r"\s*#\s*", "#", re.sub(r"\s+", " ", NUM_IN_TEXT.sub("#", l))).strip()
+
+    tables, rest, i = [], [], 0
+    while i < len(lines):
+        tpl = template(lines[i]); j = i
+        while j < len(lines) and template(lines[j]) == tpl and "#" in tpl:
+            j += 1
+        if j - i >= 2 and tpl.count("#") >= 2:
+            parts = tpl.split("#")[:-1]
+            head, prev = [], "value"
+            for p in parts:
+                name = re.sub(r"[:=,;|]+", " ", p).strip(" /")
+                name = re.sub(r"\s+", " ", name)
+                if not name:
+                    name = f"{prev} (2)"
+                head.append(name); prev = name
+            rows = [NUM_IN_TEXT.findall(lines[r]) for r in range(i, j)]
+            tables.append([head] + rows)
+            i = j
+        else:
+            rest.append(lines[i]); i += 1
+    return tables, rest
+
+
 def md_table(rows) -> str:
     head, body = rows[0], rows[1:]
     lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
@@ -142,6 +174,8 @@ def main():
         if s["errors"]:
             sec += ["", "**Errors:**", ""] + [f"- `{e}`" for e in s["errors"]]
         tables, other = tables_from_text(s["text"])
+        more, other = templated_tables(other)
+        tables += more
         if tables:  # key numbers as CSV: one block per printed table, blank line between
             import csv
             with (FIGS / f"figure{n:02d}_numbers.csv").open("w", newline="") as fh:
