@@ -315,7 +315,7 @@ def relative_error(f, S_net, S_sch, f_cut) -> float:
 def run_populations(tau_ms, RI_ext, C, W, p: dict, n_generations: int, n_trials: int,
                     average: int | None = 1, nu0: float = 10.0, seed: int = 0,
                     n_final: int = 5, f_keep: float = 1000.0, verbose: bool = True,
-                    coefs=None):
+                    coefs=None, rescale_spectrum: bool = False):
     """Self-consistent scheme with one neuron per population (Eqs. 12-15).
 
     coefs: optional (A_mu, A_var) replacing C*W and C*W**2, e.g. a single unit
@@ -327,6 +327,10 @@ def run_populations(tau_ms, RI_ext, C, W, p: dict, n_generations: int, n_trials:
     nu0: rate(s) of the white-noise generation 0 (scalar or one per population);
          ``mean_field_rates`` gives a good choice.
     The final spectrum is the mean over the last n_final generations.
+    rescale_spectrum: scale the previous spectrum by nu_hat / r so the noise intensity
+         follows the averaged rate as well as the mean (flat spectrum at nu_hat if r = 0).
+         Without it, averaging stabilizes only the mean, and at strong coupling the
+         noise-rate feedback runs away and ends in a silent, noise-free state.
     """
     rng = np.random.default_rng(seed)
     tau_ms = np.asarray(tau_ms, float); tau = tau_ms * 1e-3
@@ -354,6 +358,9 @@ def run_populations(tau_ms, RI_ext, C, W, p: dict, n_generations: int, n_trials:
         past = rates[1:] if gen > 0 else rates
         window = past if average is None else past[-average:]
         nu_hat = np.mean(window, axis=0)
+        if rescale_spectrum:
+            for a in range(P):
+                S_prev[a] = S_prev[a] * (nu_hat[a] / r[a]) if r[a] > 0 else nu_hat[a]
     rates = np.array(rates)
     S_fin /= n_fin; V_fin /= n_fin ** 2
     nu_fin = rates[-n_final:].mean(0)
