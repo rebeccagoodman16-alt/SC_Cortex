@@ -21,3 +21,7 @@ results_auto/
 !05_Pena2018_Replication/results/.gitkeep
 !05_Pena2018_Replication/figures/.gitkeep
 05_Pena2018_Replication/logs/
+
+# Archived local data (see archive/README.md)
+archive/checkpoint_backups_2026-11-08/
+archive/pena_results_superseded/

@@ -35,7 +35,7 @@ stops. They are ignored by git; deleting the Codespace also deletes those files
 unless copied to durable external storage. Large networks require disk space for
 the current and previous full network snapshots.
 
-The notebooks' pre-change working copies are kept in `.checkpoint_backups/`.
+The notebooks' pre-change working copies (8 Nov 2026) are archived in `archive/checkpoint_backups_2026-11-08/` (local only, not in git).
 Original model parameters, equations, initial guesses, durations, and seeds are
 preserved. The 04 comparison notebook already reads saved results and is unchanged.
 The pre-existing shell-only maintenance cell in HOLYKALE remains unchanged.
