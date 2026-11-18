@@ -142,6 +142,17 @@ def main():
         if s["errors"]:
             sec += ["", "**Errors:**", ""] + [f"- `{e}`" for e in s["errors"]]
         tables, other = tables_from_text(s["text"])
+        if tables:  # key numbers as CSV: one block per printed table, blank line between
+            import csv
+            with (FIGS / f"figure{n:02d}_numbers.csv").open("w", newline="") as fh:
+                w = csv.writer(fh)
+                for k, t in enumerate(tables):
+                    if k:
+                        w.writerow([])
+                    w.writerows(t)
+        csvs = sorted(FIGS.glob(f"figure{n:02d}_*.csv"))
+        if csvs:
+            sec += ["", "Data: " + " · ".join(f"[{p.name}](figures/{p.name})" for p in csvs)]
         for t in tables:
             sec += ["", md_table(t)]
         other = [l for l in other if l.strip()]
