@@ -29,14 +29,14 @@ RS-to-FS excitatory weight multiplier. Population sizes are recorded in the
 configuration for the Figure 8A setup; the Gaussian calculation uses one
 representative LIF neuron per population.
 
-Run the small baseline from the repository root:
+Run the small baseline from `05_Pena2018_Replication/`:
 
 ```bash
 python -m heterogeneous_networks.run_baseline
 ```
 
 The script writes the figure to
-`heterogeneous_networks/figures/figure_8a_baseline.png` and the compressed
+`05_Pena2018_Replication/heterogeneous_networks/figures/figure_8a_baseline.png` and the compressed
 arrays and metadata to
-`heterogeneous_networks/results/figure_8a_baseline.npz` and
-`heterogeneous_networks/results/figure_8a_baseline.json`.
+`05_Pena2018_Replication/heterogeneous_networks/results/figure_8a_baseline.npz` and
+`05_Pena2018_Replication/heterogeneous_networks/results/figure_8a_baseline.json`.

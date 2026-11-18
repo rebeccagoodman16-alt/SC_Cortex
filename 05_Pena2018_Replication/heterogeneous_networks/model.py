@@ -8,7 +8,10 @@ inputs from all three presynaptic populations.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+from pathlib import Path
+import hashlib
+from sc_checkpoint import StageCache
 from time import perf_counter
 
 import numpy as np
@@ -194,6 +197,8 @@ def run_iteration(
     seed: int = 4321,
     nperseg: int = 8192,
     average_rate_generations: bool = True,
+    checkpoint_dir: str | Path | None = None,
+    force_rerun: bool = False,
 ) -> dict[str, object]:
     """Run the coupled population iteration and return rates and spectra."""
     config = config or HeterogeneousConfig()
@@ -213,7 +218,22 @@ def run_iteration(
     all_spectra: list[tuple[np.ndarray, ...]] = []
     started = perf_counter()
 
-    for generation in range(1, generations + 1):
+    cache = StageCache(checkpoint_dir or Path(__file__).parent / 'results',
+        'heterogeneous-iteration',
+        dict(config=asdict(config), trial_s=trial_s, generations=generations, seed=seed,
+             nperseg=nperseg, average_rate_generations=average_rate_generations),
+        code=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(), force=force_rerun)
+    saved = cache.load()
+    completed = 0
+    previous_runtime = 0.0
+    if saved is not None:
+        rates, history = saved['rates'], saved['history']
+        frequencies, spectra = saved['frequencies'], saved['spectra']
+        all_rates, all_spectra = saved['all_rates'], saved['all_spectra']
+        rng.bit_generator.state = saved['rng']
+        completed = len(history)
+        previous_runtime = saved['runtime_s']
+    for generation in range(completed + 1, generations + 1):
         inputs = []
         for post_index in range(config.n_populations):
             if generation == 1:
@@ -290,11 +310,16 @@ def run_iteration(
             }
         )
 
+        cache.save(dict(rates=rates, history=history, frequencies=frequencies,
+                        spectra=spectra, all_rates=all_rates, all_spectra=all_spectra,
+                        rng=rng.bit_generator.state,
+                        runtime_s=previous_runtime + perf_counter() - started))
+
     return {
         "populations": tuple(pop.name for pop in config.populations),
         "rates_hz": np.asarray(all_rates),
         "frequencies_hz": frequencies,
         "spectra": all_spectra,
         "history": history,
-        "runtime_s": perf_counter() - started,
+        "runtime_s": previous_runtime + perf_counter() - started,
     }

@@ -6,16 +6,22 @@ __pycache__/
 # Generated numerical results and figures.
 02_Brunel_SNN/results/*
 02_Brunel_SNN/figures/*
-03_Gaussian_Approximation/results/*
-03_Gaussian_Approximation/figures/*
-04_Comparison/results/*
-04_Comparison/figures/*
-!02_Brunel_SNN/results/.gitkeep
-!02_Brunel_SNN/figures/.gitkeep
-!03_Gaussian_Approximation/results/.gitkeep
-!03_Gaussian_Approximation/figures/.gitkeep
-!04_Comparison/results/.gitkeep
-!04_Comparison/figures/.gitkeep
 
 # Generated Holy Kale condition results.
 01_Original_Colab/results/
+
+# Automatic simulation caches and pre-integration backups
+results_auto/
+.checkpoint_backups/
+**/results/cache/
+
+# Pena et al. (2018) replication outputs
+05_Pena2018_Replication/results/*
+05_Pena2018_Replication/figures/*
+!05_Pena2018_Replication/results/.gitkeep
+!05_Pena2018_Replication/figures/.gitkeep
+05_Pena2018_Replication/logs/
+
+# Archived local data (see archive/README.md)
+archive/checkpoint_backups_2026-11-08/
+archive/pena_results_superseded/
