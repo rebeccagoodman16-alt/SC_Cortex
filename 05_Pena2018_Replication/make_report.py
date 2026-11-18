@@ -91,7 +91,10 @@ def templated_tables(lines):
     """Turn runs of >= 2 lines that share a template, e.g.
     'J=0.1: FF 0.48/ 0.45 tau_c 40.7/ 41.8 ms', into a table whose column names come
     from the text before each number. Returns (tables, leftover lines)."""
+    LABEL = re.compile(r"^\s*([A-Za-z][\w.+-]{0,15})(?:\s*:|\s+(?=[-+]?\d))")   # "RS  : ..." row labels
+
     def template(l):
+        l = LABEL.sub("@:", l)
         return re.sub(r"\s*#\s*", "#", re.sub(r"\s+", " ", NUM_IN_TEXT.sub("#", l))).strip()
 
     tables, rest, i = [], [], 0
@@ -100,16 +103,53 @@ def templated_tables(lines):
         while j < len(lines) and template(lines[j]) == tpl and "#" in tpl:
             j += 1
         if j - i >= 2 and tpl.count("#") >= 2:
-            parts = tpl.split("#")[:-1]
-            head, prev = [], "value"
+            labelled = tpl.startswith("@:")
+            parts = tpl[2:].split("#")[:-1] if labelled else tpl.split("#")[:-1]
+            head, base, rep = [], "value", 1
             for p in parts:
-                name = re.sub(r"[:=,;|]+", " ", p).strip(" /")
-                name = re.sub(r"\s+", " ", name)
-                if not name:
-                    name = f"{prev} (2)"
-                head.append(name); prev = name
-            rows = [NUM_IN_TEXT.findall(lines[r]) for r in range(i, j)]
-            tables.append([head] + rows)
+                name = re.sub(r"\s+", " ", re.sub(r"[:=,;|]+", " ", p)).strip(" /")
+                if name:
+                    base, rep = name, 1
+                else:
+                    rep += 1
+                    name = f"{base} {rep}"
+                head.append(name)
+            rows = []
+            for r in range(i, j):
+                m = LABEL.match(lines[r]) if labelled else None
+                body = lines[r][m.end():] if m else lines[r]
+                rows.append(([m.group(1)] if m else []) + NUM_IN_TEXT.findall(body))
+            ncol = max(len(r) for r in rows)
+            # a header line just above, e.g. "case  nuE sch/net/paper  rel.err E, I (Eq. 19)"
+            if rest:
+                groups = [g for g in re.split(r"\s{2,}", rest[-1].strip()) if g]
+                expanded = []
+                for g in groups:
+                    g = re.sub(r"\s*\(.*?\)", "", g)
+                    if "/" in g:
+                        pre, _, alts = g.rpartition(" ")
+                        expanded += [f"{pre} {a}".strip() for a in alts.split("/")]
+                    elif "," in g:
+                        first = g.split(",")
+                        pre, _, a0 = first[0].rpartition(" ")
+                        expanded += [f"{pre} {a0}".strip()] + [f"{pre} {a.strip()}".strip() for a in first[1:]]
+                    else:
+                        expanded.append(g)
+                if len(expanded) == ncol and not any(NUM_IN_TEXT.fullmatch(e) for e in expanded):
+                    head = expanded; rest.pop(); labelled = False
+                    head_from_line = True
+                else:
+                    head_from_line = False
+            else:
+                head_from_line = False
+            if labelled and not head_from_line:
+                head = ["label"] + head
+            keep = [c for c in range(len(head))
+                    if c == 0 or len({row[c] for row in rows if c < len(row)}) > 1]
+            if len(keep) >= 2:   # drop constant columns such as the 19 in "Eq.19"
+                tables.append([[head[c] for c in keep]] + [[row[c] for c in keep if c < len(row)] for row in rows])
+            else:
+                rest.extend(lines[i:j])
             i = j
         else:
             rest.append(lines[i]); i += 1
@@ -139,7 +179,7 @@ def notebook_summary(nb_path: Path):
                 images.append(o["data"]["image/png"])
     # drop cache chatter ("loaded x.npz", "saved y.npz (12 s)") and per-generation logs
     keep = [l for l in "".join(text).splitlines()
-            if not re.match(r"^(loaded|saved) \S+\.npz|^gen\s+\d+:|^--- ", l.strip())]
+            if not re.match(r"^(loaded|saved) \S+\.(npz|csv)|^gen\s+\d+:|^--- |^window \d+/\d+ done|^built \d+ neurons", l.strip())]
     return {"ran": ran, "cells": len(code), "errors": errors, "text": "\n".join(keep),
             "images": images, "mtime": nb_path.stat().st_mtime}
 
