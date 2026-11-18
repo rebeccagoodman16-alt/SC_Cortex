@@ -179,7 +179,7 @@ def notebook_summary(nb_path: Path):
                 images.append(o["data"]["image/png"])
     # drop cache chatter ("loaded x.npz", "saved y.npz (12 s)") and per-generation logs
     keep = [l for l in "".join(text).splitlines()
-            if not re.match(r"^(loaded|saved) \S+\.(npz|csv)|^gen\s+\d+:|^--- |^window \d+/\d+ done|^built \d+ neurons", l.strip())]
+            if not re.match(r"^(loaded|saved) \S+\.(npz|csv)|^gen\s+\d+:|^--- |^window \d+/\d+ done|^built \d+ neurons|^simulated [\d.]+ s in \d+ s", l.strip())]
     return {"ran": ran, "cells": len(code), "errors": errors, "text": "\n".join(keep),
             "images": images, "mtime": nb_path.stat().st_mtime}
 
