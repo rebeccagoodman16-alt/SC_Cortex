@@ -8,6 +8,7 @@
 # several notebooks running at once starve each other and get Pylance killed.
 # Every notebook caches its results in results/, so a rerun after an interruption
 # reloads finished runs instead of recomputing them. Logs go to logs/.
+# REPORT.md (figures + key numbers, one page) is rebuilt after each figure.
 #
 # To keep it running after you close the terminal:
 #   nohup ./run_figures.sh > logs/run_all.log 2>&1 &
@@ -32,4 +33,6 @@ for n in "${figs[@]}"; do
   else
     echo "    FAILED after $(( $(date +%s) - start )) s — see logs/${nb%.ipynb}.log"
   fi
+  "$PY" make_report.py > /dev/null 2>&1   # refresh REPORT.md after every figure
 done
+echo "[$(date +%H:%M:%S)] all done — open REPORT.md (Ctrl+Shift+V)"
