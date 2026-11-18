@@ -54,21 +54,29 @@ neuron per population driven by Gaussian noise whose mean (Eq. 12) and spectrum
 | 1 | Schematic: heterogeneous E/I network → one representative neuron per population, iterated over generations | Diagram only | — | skipped (schematic) |
 | 2 | Schematic: Erdős–Rényi network (distributed in-degrees/weights) → M representative neurons | Diagram only | — | skipped (schematic) |
 | 3 | Rate stabilization by averaging (g = 5.5, J = 0.2 mV, τs = 10 ms, RI = 30 mV; network rate 9.1 Hz). A: no averaging, B: 2-generation average, C: all-past average, D: input→output rate map | Scheme | [`Figure03_Rate_Averaging.ipynb`](Figure03_Rate_Averaging.ipynb) | ✓ A–D match the published curves (generations 0–10) |
-| 4 | Slow-fluctuation state, homogeneous net (g = 5, RI = 24 mV, τD = 0.55 ms, τR = 0.5 ms). A: spectra vs J (N_E = 8k, 80k; EIF inset), B–C: rasters J = 0.2, 0.8 mV, D–F: rate, τ_corr, Fano vs J | Network + scheme | [`Figure04_Slow_Fluctuations.ipynb`](Figure04_Slow_Fluctuations.ipynb) | scaffold |
-| 5 | Synaptic filtering (J = 0.2 mV). A: spectra vs τs, B–C: Fano and τ_corr vs J (τs = 10 ms) | Scheme (+ network) | [`Figure05_Synaptic_Filter.ipynb`](Figure05_Synaptic_Filter.ipynb) | scaffold |
-| 6 | Two populations with different parameters (τE = 20, τI = 19 ms); (gE, gI) = (4.2, 4.0), (3.7, 3.7), (4.25, 3.6) | Network + scheme | [`Figure06_EI_Heterogeneous.ipynb`](Figure06_EI_Heterogeneous.ipynb) | scaffold |
-| 7 | Scheme accuracy vs network size (gE = 4.2, gI = 4.0): relative error, Fano, τ_corr vs N_E | Network sweep | [`Figure07_Network_Size.ipynb`](Figure07_Network_Size.ipynb) | scaffold |
-| 8 | >2 populations. A: RS/LTS/FS (g = 4) — baseline exists in [`heterogeneous_networks/`](heterogeneous_networks/). B: two modules of 1.25×10⁵ cells, J = 0.1 / 0.27 mV (~80 Hz hump) | Network + scheme | [`Figure08_Multi_Population.ipynb`](Figure08_Multi_Population.ipynb) | scaffold |
-| 9 | Rate histograms, scheme (M = 50, generations 6–20) vs network. A: binomial in-degrees, B: + exponential weights | ER scheme + network | [`Figure09_Rate_Histograms.ipynb`](Figure09_Rate_Histograms.ipynb) | scaffold |
-| 10 | ER net: rate mean/SD across generations vs g (⟨CE⟩ = 1000, ⟨CI⟩ = 250, J = 0.1 mV, τD = 2 ms). C–D: rate-binned and averaged spectra | ER scheme + network | [`Figure10_ER_Rates_Spectra.ipynb`](Figure10_ER_Rates_Spectra.ipynb) | scaffold |
-| 11 | As Fig 10 with exponentially distributed weights | ER scheme + network | [`Figure11_ER_Exp_Weights.ipynb`](Figure11_ER_Exp_Weights.ipynb) | scaffold |
-| 12 | Relative spectral error vs input skewness (A) and excess kurtosis (B), g = 4 and 6, 1000 neurons, 2 ms bins | Network analysis | [`Figure12_Non_Gaussianity.ipynb`](Figure12_Non_Gaussianity.ipynb) | scaffold |
-| 13 | As Fig 12, restricted to neurons firing 20–100 Hz | Network analysis | [`Figure13_Non_Gaussianity_Rate_Window.ipynb`](Figure13_Non_Gaussianity_Rate_Window.ipynb) | scaffold |
+| 4 | Slow-fluctuation state, homogeneous net (g = 5, RI = 24 mV, τD = 0.55 ms, τR = 0.5 ms). A: spectra vs J (N_E = 8k, 80k; EIF inset), B–C: rasters J = 0.2, 0.8 mV, D–F: rate, τ_corr, Fano vs J | Network + scheme | [`Figure04_Slow_Fluctuations.ipynb`](Figure04_Slow_Fluctuations.ipynb) | ran 18 Nov — rate/FF match network at all J; τ_c 25–30% short at J ≥ 0.6 |
+| 5 | Synaptic filtering (J = 0.2 mV). A: spectra vs τs, B–C: Fano and τ_corr vs J (τs = 10 ms) | Scheme (+ network) | [`Figure05_Synaptic_Filter.ipynb`](Figure05_Synaptic_Filter.ipynb) | ran 18 Nov — rates within 0.4 Hz; FF within ~15% |
+| 6 | Two populations with different parameters (τE = 20, τI = 19 ms); (gE, gI) = (4.2, 4.0), (3.7, 3.7), (4.25, 3.6) | Network + scheme | [`Figure06_EI_Heterogeneous.ipynb`](Figure06_EI_Heterogeneous.ipynb) | ran 18 Nov — B matches; A, C scheme not fully converged (E rate high) |
+| 7 | Scheme accuracy vs network size (gE = 4.2, gI = 4.0): relative error, Fano, τ_corr vs N_E | Network sweep | [`Figure07_Network_Size.ipynb`](Figure07_Network_Size.ipynb) | ran 18 Nov — E error 4.1% → 2.8% with N_E (paper < 1% at 20k) |
+| 8 | >2 populations. A: RS/LTS/FS (g = 4) — baseline exists in [`heterogeneous_networks/`](heterogeneous_networks/). B: two modules of 1.25×10⁵ cells, J = 0.1 / 0.27 mV (~80 Hz hump) | Network + scheme | [`Figure08_Multi_Population.ipynb`](Figure08_Multi_Population.ipynb) | ran 18 Nov — 3-pop and modules within 3%, errors ≤ 0.013 |
+| 9 | Rate histograms, scheme (M = 50, generations 6–20) vs network. A: binomial in-degrees, B: + exponential weights | ER scheme + network | [`Figure09_Rate_Histograms.ipynb`](Figure09_Rate_Histograms.ipynb) | ran 18 Nov — shapes match; scheme mean rate 5–25% high |
+| 10 | ER net: rate mean/SD across generations vs g (⟨CE⟩ = 1000, ⟨CI⟩ = 250, J = 0.1 mV, τD = 2 ms). C–D: rate-binned and averaged spectra | ER scheme + network | [`Figure10_ER_Rates_Spectra.ipynb`](Figure10_ER_Rates_Spectra.ipynb) | ran 18 Nov — mean-spectrum error ≤ 4.5%; mean rate high at g = 4 |
+| 11 | As Fig 10 with exponentially distributed weights | ER scheme + network | [`Figure11_ER_Exp_Weights.ipynb`](Figure11_ER_Exp_Weights.ipynb) | ran 18 Nov — errors mostly < 5% (g = 3.5: 9–14%) |
+| 12 | Relative spectral error vs input skewness (A) and excess kurtosis (B), g = 4 and 6, 1000 neurons, 2 ms bins | Network analysis | [`Figure12_Non_Gaussianity.ipynb`](Figure12_Non_Gaussianity.ipynb) | ran 18 Nov — lower bound (0.34) above errors: needs longer measurements |
+| 13 | As Fig 12, restricted to neurons firing 20–100 Hz | Network analysis | [`Figure13_Non_Gaussianity_Rate_Window.ipynb`](Figure13_Non_Gaussianity_Rate_Window.ipynb) | ran 18 Nov — same lower-bound issue as Fig 12 |
 
 Note: `01_Original_Colab/4.5/Figure10_G4.5_CE100_CI25_J1.0.ipynb` is a different "Figure 10"
 (C_E = 100, V_r = 0/10 mV) and is **not** Pena Fig 10.
 
 ## Open items to verify against the PDF
+
+Results for every figure: open `REPORT.md` (Ctrl+Shift+V); data are in `figures/*.csv`.
+
+- Fig 6/7: all-past rate averaging keeps early transients; try no averaging near balance,
+  two-generation smoothing, or a burn-in before averaging.
+- Fig 9–11: scheme mean rate 5–25% above the network (worst at g = 4); check with a larger network.
+- Fig 12/13: the two-measurement lower bound exceeds the errors; use longer recordings.
+- Fig 4/5: τ_c shorter than the network at strong coupling (network size?).
 
 - Integration step `dt` (not stated in the paper; we use 0.1 ms).
 - Fig 3 conventions are inferred from the published curves, not stated in the text: generation 0 is
