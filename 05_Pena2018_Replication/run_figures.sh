@@ -25,7 +25,7 @@ for n in "${figs[@]}"; do
   [ -n "$nb" ] || { echo "no notebook for figure $n"; continue; }
   echo "[$(date +%H:%M:%S)] figure $n: $nb"
   start=$(date +%s)
-  if "$PY" -m jupyter nbconvert --to notebook --execute --inplace \
+  if "$PY" -m nbconvert --to notebook --execute --inplace \
        --ExecutePreprocessor.kernel_name=sc-cortex \
        --ExecutePreprocessor.timeout=-1 "$nb" > "logs/${nb%.ipynb}.log" 2>&1; then
     echo "    done in $(( $(date +%s) - start )) s"
