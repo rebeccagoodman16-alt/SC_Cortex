@@ -31,17 +31,20 @@ def _scheme_p(p):
 
 # --------------------------------------------------------------------------- homogeneous
 def homogeneous_scheme(p: dict, n_generations=40, n_trials=1000, average=None, seed=0,
-                       force=False):
+                       force=False, rescale=None):
     """One unit for a homogeneous E/I network (E and I cells identical)."""
     A = ([[(p["C_E"] - p["g"] * p["C_I"]) * p["J"]]], [[(p["C_E"] + p["g"] ** 2 * p["C_I"]) * p["J"] ** 2]])
     key = {"kind": "homogeneous", **_scheme_p(p), "tau_m": p["tau_m"], "RI_ext": p["RI_ext"],
            "C_E": p["C_E"], "C_I": p["C_I"], "J": p["J"], "g": p["g"],
            "n_generations": n_generations, "n_trials": n_trials, "average": average, "seed": seed}
+    rescale = (average != 1) if rescale is None else rescale
+    if rescale:  # key added only when on, so non-averaged runs keep their cache
+        key["rescale_spectrum"] = True
     def run():
         nu0 = ps.mean_field_rates([p["tau_m"]], p["RI_ext"], None, None, p, coefs=A)
         out = ps.run_populations([p["tau_m"]], p["RI_ext"], None, None, p, n_generations,
                                  n_trials, average=average, nu0=nu0, seed=seed,
-                                 n_final=10, coefs=A)
+                                 n_final=10, coefs=A, rescale_spectrum=rescale)
         out["nu0"] = nu0
         return out
     return ps.cached("scheme_homog", key, run, RESULTS, force)
@@ -61,15 +64,19 @@ def homogeneous_network(p: dict, N_E: int, n_windows=10, dt=None, seed=1, record
 
 # --------------------------------------------------------------------------- populations
 def population_scheme(name, tau_ms, RI_ext, C, W, p, n_generations=40, n_trials=1000,
-                      average=None, seed=0, force=False):
+                      average=None, seed=0, force=False, rescale=None):
     C = np.asarray(C, float); W = np.asarray(W, float)
     key = {"kind": name, **_scheme_p(p), "tau": list(map(float, tau_ms)), "RI_ext": RI_ext,
            "C": C.tolist(), "W": W.tolist(), "n_generations": n_generations,
            "n_trials": n_trials, "average": average, "seed": seed}
+    rescale = (average != 1) if rescale is None else rescale
+    if rescale:
+        key["rescale_spectrum"] = True
     def run():
         nu0 = ps.mean_field_rates(tau_ms, RI_ext, C, W, p)
         out = ps.run_populations(tau_ms, RI_ext, C, W, p, n_generations, n_trials,
-                                 average=average, nu0=nu0, seed=seed, n_final=10)
+                                 average=average, nu0=nu0, seed=seed, n_final=10,
+                                 rescale_spectrum=rescale)
         out["nu0"] = nu0
         return out
     return ps.cached(f"scheme_{name}", key, run, RESULTS, force)
